@@ -1,594 +1,317 @@
-/* ═══════════════════════════════════════
-   NIKHIL GUMASTA — script.js
-   Creative Mints inspired interactions
-   ═══════════════════════════════════════ */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nikhil Gumasta — CyberAkhil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-'use strict';
+<!-- GLOBAL BG CANVAS -->
+<canvas id="bg-canvas"></canvas>
 
-/* ── DATA ─────────────────────────────── */
-const SKILLS = [
-  {
-    icon:'🌐', name:'Web Development', desc:'Crafting responsive, modern interfaces.',
-    tags:['HTML5','CSS3','JavaScript','React'], tclass:'cyan',
-    bars:[{n:'HTML/CSS',v:85},{n:'JavaScript',v:72}],
-    size:'wide2'
-  },
-  {
-    icon:'🐍', name:'Programming', desc:'Algorithms, problem solving, clean code.',
-    tags:['Python','C/C++','Java','Bash'], tclass:'purple',
-    bars:[{n:'Python',v:75},{n:'C/C++',v:60}],
-    size:''
-  },
-  {
-    icon:'🔐', name:'Cybersecurity', desc:'Ethical hacking, CTF, network security.',
-    tags:['Linux','Kali','CTF','Networking'], tclass:'pink',
-    bars:[{n:'Linux',v:70},{n:'Networking',v:60}],
-    size:''
-  },
-  {
-    icon:'🛠️', name:'Dev Tools', desc:'Professional workflows & version control.',
-    tags:['Git','GitHub','VS Code','Terminal'], tclass:'cyan',
-    bars:[{n:'Git/GitHub',v:80}],
-    size:''
-  },
-  {
-    icon:'🗄️', name:'Backend & DB', desc:'Server-side logic and database design.',
-    tags:['Node.js','MySQL','MongoDB','REST'], tclass:'purple',
-    bars:[{n:'Node.js',v:58},{n:'SQL',v:62}],
-    size:''
-  },
-  {
-    icon:'🤝', name:'Open Source', desc:'Contributing to global dev community.',
-    tags:['PRs','Docs','JSON','CI/CD'], tclass:'cyan',
-    bars:[{n:'Contributions',v:70}],
-    size:''
-  },
-];
+<!-- PROGRESS -->
+<div id="prog"></div>
 
-const H_PROJECTS = [
-  {
-    num:'01', name:'Portfolio Website',
-    desc:'Dark hacker-themed portfolio. Matrix rain, custom cursor, waterfall animations, terminal UI.',
-    tags:['HTML','CSS','JS'],
-    link:'https://cyberakhil.github.io',
-    linkText:'View Live ↗',
-    bg:'linear-gradient(135deg,#0d0621,#1f0b42,#0a1540)',
-    glowColor:'rgba(139,92,246,.6)',
-    emoji:'🌐'
-  },
-  {
-    num:'02', name:'is-a.dev Contribution',
-    desc:'Open-source PR to register nikhilg.is-a.dev. Passed CI tests in 23s. Successfully merged.',
-    tags:['JSON','Git','CI/CD'],
-    link:'https://github.com/is-a-dev/register/pull/36887',
-    linkText:'View PR ↗',
-    bg:'linear-gradient(135deg,#001522,#003952,#005266)',
-    glowColor:'rgba(0,232,200,.6)',
-    emoji:'⚡'
-  },
-  {
-    num:'03', name:'CTF Challenges',
-    desc:'Solving Capture The Flag challenges. Web exploitation, crypto, forensics, reverse engineering.',
-    tags:['Python','Linux','Security'],
-    link:'https://github.com/CyberAkhil',
-    linkText:'GitHub ↗',
-    bg:'linear-gradient(135deg,#1a0000,#3a0a14,#600020)',
-    glowColor:'rgba(236,72,153,.6)',
-    emoji:'🔐'
-  },
-  {
-    num:'04', name:'CS/IT Study Notes',
-    desc:'Organized notes repo covering DSA, OS, DBMS, Networks. Open for fellow students.',
-    tags:['Markdown','GitHub','Docs'],
-    link:'https://github.com/CyberAkhil',
-    linkText:'GitHub ↗',
-    bg:'linear-gradient(135deg,#091800,#1d3800,#2e5500)',
-    glowColor:'rgba(245,158,11,.5)',
-    emoji:'📚'
-  },
-];
+<!-- CURSOR -->
+<div id="c1"></div>
+<div id="c2"></div>
 
-const GRID_PROJECTS = [
-  {
-    num:'PROJECT_01', name:'Portfolio Website',
-    desc:'Dark hacker-themed site with matrix rain & waterfall effects.',
-    link:'https://cyberakhil.github.io', linkText:'View Live ↗'
-  },
-  {
-    num:'PROJECT_02', name:'is-a.dev PR #36887',
-    desc:'Open-source domain registration. CI passed, merged.',
-    link:'https://github.com/is-a-dev/register/pull/36887', linkText:'View PR ↗'
-  },
-  {
-    num:'PROJECT_03', name:'CTF Solutions',
-    desc:'Writeups & exploit scripts for CTF challenges.',
-    link:'https://github.com/CyberAkhil', linkText:'GitHub ↗'
-  },
-  {
-    num:'PROJECT_04', name:'Study Notes Repo',
-    desc:'CS/IT notes and programs for students.',
-    link:'https://github.com/CyberAkhil', linkText:'GitHub ↗'
-  },
-  {
-    num:'PROJECT_05', name:'More Coming…',
-    desc:'New projects in web & security coming soon. Watch the repo.',
-    link:'https://github.com/CyberAkhil', linkText:'Follow ↗'
-  },
-];
+<!-- PRELOADER -->
+<div id="loader">
+  <div class="ld-name">CYBERAKHIL</div>
+  <div class="ld-bar"><div class="ld-fill" id="ldfill"></div></div>
+  <div class="ld-pct" id="ldpct">000%</div>
+</div>
 
-const ACHIEVEMENTS = [
-  {
-    icon:'🌐', badge:'OPEN SOURCE',
-    title:'nikhilg.is-a.dev — Registered',
-    desc:'PR to is-a-dev/register — CI tests passed in 23s, merged into the official registry.'
-  },
-  {
-    icon:'🎓', badge:'EDUCATION',
-    title:'CS/IT Student — Active Learner',
-    desc:'Strong foundations in DSA, OS, DBMS, Networks, Web Technologies.'
-  },
-  {
-    icon:'🐙', badge:'GITHUB',
-    title:'Active Open-Source Contributor',
-    desc:'Public repos, community PRs, and building useful tools for fellow devs.'
-  },
-  {
-    icon:'⚡', badge:'DEVOPS',
-    title:'GitHub Pages Deployment',
-    desc:'Self-hosted portfolio on GitHub Pages — zero cost, custom domain linked.'
-  },
-  {
-    icon:'🔐', badge:'SECURITY',
-    title:'Ethical Hacking Journey',
-    desc:'CTF challenges, Linux, networking, Kali tools. Growing in cybersecurity daily.'
-  },
-  {
-    icon:'🚀', badge:'MINDSET',
-    title:'Builder Mindset',
-    desc:'Shipping projects, learning in public, contributing to the community. Always building.'
-  },
-];
+<!-- MOBILE MENU -->
+<div id="mob">
+  <a href="#hero" class="mm">Home</a>
+  <a href="#about" class="mm">About</a>
+  <a href="#skills" class="mm">Skills</a>
+  <a href="#projects" class="mm">Projects</a>
+  <a href="#journey" class="mm">Journey</a>
+  <a href="#contact" class="mm">Contact</a>
+</div>
 
-/* ── PRELOADER ─────────────────────────── */
-(function initPreloader() {
-  const el   = document.getElementById('preloader');
-  const pct  = document.getElementById('prePct');
-  const arc  = document.querySelector('.pre-arc');
-  const circ = 2 * Math.PI * 42;
+<!-- NAV -->
+<nav id="nav">
+  <a href="#hero" class="n-logo">NG/</a>
+  <div class="n-right">
+    <ul class="n-links">
+      <li><a href="#about" data-s="about"><span class="txt">About</span><span class="ghost">About</span></a></li>
+      <li><a href="#skills" data-s="skills"><span class="txt">Skills</span><span class="ghost">Skills</span></a></li>
+      <li><a href="#projects" data-s="projects"><span class="txt">Projects</span><span class="ghost">Projects</span></a></li>
+      <li><a href="#journey" data-s="journey"><span class="txt">Journey</span><span class="ghost">Journey</span></a></li>
+      <li><a href="#contact" data-s="contact"><span class="txt">Contact</span><span class="ghost">Contact</span></a></li>
+    </ul>
+    <a href="mailto:nikhilgumasta1@gmail.com" class="hire-btn">Hire Me</a>
+    <button class="burger" id="bg" aria-label="menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
 
-  let n = 0;
-  const step = () => {
-    n = Math.min(n + Math.random() * 4 + 1, 100);
-    pct.textContent = Math.floor(n);
-    arc.style.strokeDashoffset = circ - (circ * n / 100);
-    if (n < 100) { requestAnimationFrame(step); }
-    else {
-      setTimeout(() => {
-        el.classList.add('out');
-        document.body.style.overflow = '';
-        initAll();
-      }, 400);
-    }
-  };
-  document.body.style.overflow = 'hidden';
-  setTimeout(step, 300);
-})();
+<!-- ══════════════════════════════════
+     HERO
+══════════════════════════════════ -->
+<section id="hero" class="sec">
+  <div class="hero-name" id="heroname">
+    <div class="row"><span>NIKHIL</span></div>
+    <div class="row delay1">
+      <span class="neon-g" style="-webkit-text-stroke:0">GUMASTA</span>
+    </div>
+    <div class="row delay2">
+      <span class="accent">AI ENGINEER</span>
+    </div>
+  </div>
+  <div class="hero-meta" id="hmeta">
+    <div class="role">// CyberAkhil · SATI Vidisha</div>
+    <div class="desc">2nd year B.Tech in AI & Data Science. Building intelligent systems — from LLMs to agentic pipelines & cloud infra.</div>
+  </div>
+  <div class="scroll-hint" id="shint">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
 
-/* ── CURSOR ──────────────────────────── */
-function initCursor() {
-  const dot  = document.getElementById('cursor-dot');
-  const ring = document.getElementById('cursor-ring');
-  let mx=0,my=0,rx=0,ry=0;
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-row"><div class="marquee-track slow" id="mtrack1"></div></div>
+  <div class="marquee-row"><div class="marquee-track rev fast" id="mtrack2"></div></div>
+  <div class="marquee-row"><div class="marquee-track" id="mtrack3"></div></div>
+</div>
 
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    dot.style.left = mx+'px'; dot.style.top = my+'px';
-  });
-
-  (function loop() {
-    rx += (mx - rx) * 0.1;
-    ry += (my - ry) * 0.1;
-    ring.style.left = rx+'px'; ring.style.top = ry+'px';
-    requestAnimationFrame(loop);
-  })();
-
-  document.addEventListener('mousedown', () => document.body.classList.add('cur-click'));
-  document.addEventListener('mouseup',   () => document.body.classList.remove('cur-click'));
-
-  const addHover = sel => document.querySelectorAll(sel).forEach(el => {
-    el.addEventListener('mouseenter', () => document.body.classList.add('cur-hover'));
-    el.addEventListener('mouseleave', () => document.body.classList.remove('cur-hover'));
-  });
-  addHover('a, button, .hcard, .pg-card, .ach-card, .bento-card, .contact-btn, .float-card');
-}
-
-/* ── PROGRESS BAR ────────────────────── */
-function initProgressBar() {
-  const bar = document.getElementById('progress-bar');
-  window.addEventListener('scroll', () => {
-    const total = document.documentElement.scrollHeight - innerHeight;
-    bar.style.width = (scrollY / total * 100) + '%';
-  });
-}
-
-/* ── NAV ─────────────────────────────── */
-function initNav() {
-  const nav     = document.getElementById('nav');
-  const burger  = document.getElementById('burger');
-  const overlay = document.getElementById('mobOverlay');
-  const navAs   = document.querySelectorAll('.nav-a');
-
-  window.addEventListener('scroll', () => {
-    nav.classList.toggle('scrolled', scrollY > 40);
-    // Active section
-    const secs = document.querySelectorAll('section[id]');
-    let current = '';
-    secs.forEach(s => { if (scrollY >= s.offsetTop - 120) current = s.id; });
-    navAs.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#'+current));
-  });
-
-  burger.addEventListener('click', () => {
-    burger.classList.toggle('open');
-    overlay.classList.toggle('open');
-    document.body.style.overflow = overlay.classList.contains('open') ? 'hidden' : '';
-  });
-
-  overlay.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => {
-      burger.classList.remove('open');
-      overlay.classList.remove('open');
-      document.body.style.overflow = '';
-    });
-  });
-
-  // Smooth anchors
-  document.querySelectorAll('a[href^="#"]').forEach(a => {
-    a.addEventListener('click', e => {
-      const t = document.querySelector(a.getAttribute('href'));
-      if (t) {
-        e.preventDefault();
-        t.scrollIntoView({ behavior:'smooth', block:'start' });
-      }
-    });
-  });
-}
-
-/* ── TYPED TEXT ──────────────────────── */
-function initTyped() {
-  const el = document.getElementById('roleTyped');
-  if (!el) return;
-  const phrases = ['CS/IT Student.','Web Developer.','Security Enthusiast.','Open Source Contributor.','CyberAkhil.'];
-  let pi=0, ci=0, del=false;
-
-  const tick = () => {
-    const p = phrases[pi];
-    if (!del) { el.textContent = p.slice(0,++ci); if (ci===p.length){del=true;setTimeout(tick,1600);return} }
-    else       { el.textContent = p.slice(0,--ci); if (ci===0){del=false;pi=(pi+1)%phrases.length} }
-    setTimeout(tick, del ? 35 : 70);
-  };
-  tick();
-}
-
-/* ── COUNTER ─────────────────────────── */
-function animateCount(el) {
-  const target = parseInt(el.dataset.count);
-  let n = 0;
-  const step = () => {
-    n = Math.min(n + Math.ceil(target/40), target);
-    el.textContent = n;
-    if (n < target) requestAnimationFrame(step);
-  };
-  step();
-}
-
-/* ── SCROLL REVEAL ───────────────────── */
-function initReveal() {
-  const io = new IntersectionObserver(entries => {
-    entries.forEach((e, i) => {
-      if (e.isIntersecting) {
-        const delay = (e.target.dataset.delay || i * 80);
-        setTimeout(() => {
-          e.target.classList.add('vis');
-          // Counters
-          e.target.querySelectorAll('.s-num[data-count]').forEach(animateCount);
-        }, delay);
-        io.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.1 });
-
-  document.querySelectorAll('.reveal, .reveal-left').forEach(el => io.observe(el));
-}
-
-/* ── SKILLS BENTO ────────────────────── */
-function initSkills() {
-  const grid = document.getElementById('bentoGrid');
-  if (!grid) return;
-
-  SKILLS.forEach((sk, i) => {
-    const card = document.createElement('div');
-    card.className = 'bento-card' + (sk.size ? ' '+sk.size : '');
-    card.innerHTML = `
-      <div class="bk-icon">${sk.icon}</div>
-      <div class="bk-name">${sk.name}</div>
-      <p class="bk-desc">${sk.desc}</p>
-      <div class="bk-tags">${sk.tags.map(t=>`<span class="btag ${sk.tclass}">${t}</span>`).join('')}</div>
-      <div class="sk-bars">
-        ${sk.bars.map(b=>`
-          <div class="sk-br">
-            <div class="sk-bm"><span>${b.n}</span><span>${b.v}%</span></div>
-            <div class="sk-bg"><div class="sk-bf" data-w="${b.v}" style="width:0%"></div></div>
+<!-- ══════════════════════════════════
+     ABOUT
+══════════════════════════════════ -->
+<section id="about" class="sec">
+  <div class="sw">
+    <div class="about-grid">
+      <div>
+        <div class="about-num r">01</div>
+        <div class="about-label r" style="transition-delay:.05s">About Me</div>
+        <h2 class="about-h2 r" style="transition-delay:.1s">AI Builder.<br>CyberAkhil.<br><span style="color:var(--lime)">SATI Vidisha.</span></h2>
+        <p class="about-p r" style="transition-delay:.15s">Hey — I'm <strong>Nikhil Gumasta</strong>, known online as <span class="hl">CyberAkhil</span>. I'm a 2nd-year B.Tech student in AI & Data Science at SATI Vidisha, and I build real systems — not just coursework.</p>
+        <p class="about-p r" style="transition-delay:.2s">From <strong>self-hosted AI agent infrastructure on Azure VMs</strong> to LLM fine-tuning and full-stack applications, I live where theory meets production. My current obsession: <span class="hl">agentic AI</span> — autonomous systems that plan, act, and self-correct.</p>
+        <p class="about-p r" style="transition-delay:.25s">I'm driven by a deep curiosity about intelligence itself — what makes machines understand, and how to build systems that genuinely reason. Beyond code, I explore philosophy, theology, and the meaning of consciousness.</p>
+        <div class="about-pills r" style="transition-delay:.3s">
+          <span class="pill">SATI Vidisha</span>
+          <span class="pill">Batch 2024–28</span>
+          <span class="pill">AI & DS</span>
+          <span class="pill">Azure Cloud</span>
+          <span class="pill">LLM Engineer</span>
+          <span class="pill">Open to Internships</span>
+        </div>
+      </div>
+      <div class="about-visual r" style="transition-delay:.15s">
+        <div class="av-card av-main">
+          <div class="av-logo">NG/</div>
+          <div class="av-name">Nikhil Gumasta</div>
+          <div class="av-role">AI & Data Science Engineer · CyberAkhil</div>
+        </div>
+        <div class="av-card av-float">
+          <div class="av-float-label">// Quick Stats</div>
+          <div class="av-stat-row">
+            <div class="av-stat"><div class="av-stat-n">4+</div><div class="av-stat-l">Projects</div></div>
+            <div class="av-stat"><div class="av-stat-n">125</div><div class="av-stat-l">Samples</div></div>
+            <div class="av-stat"><div class="av-stat-n">6+</div><div class="av-stat-l">Stacks</div></div>
           </div>
-        `).join('')}
+        </div>
       </div>
-    `;
-    grid.appendChild(card);
+    </div>
+  </div>
+</section>
 
-    // 3D tilt
-    card.addEventListener('mousemove', e => {
-      const r = card.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width  - .5;
-      const y = (e.clientY - r.top)  / r.height - .5;
-      card.style.transform = `translateY(-6px) rotateX(${-y*6}deg) rotateY(${x*6}deg)`;
-    });
-    card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+<!-- ══════════════════════════════════
+     SKILLS
+══════════════════════════════════ -->
+<section id="skills" class="sec">
+  <div class="sw">
+    <div class="skills-header r">
+      <h2 class="skills-h2">Skills<br>& Stack</h2>
+      <p class="skills-sub">6 core domains spanning AI engineering, cloud infrastructure, and full-stack development.</p>
+    </div>
+    <div class="skills-grid">
+      <div class="sk r"><div class="sk-n">01</div><div class="sk-icon">🧠</div><div class="sk-title">AI / Machine Learning</div><div class="sk-desc">LLM fine-tuning, prompt engineering, RAG pipelines, transformer architectures, and AI APIs at production scale.</div><div class="sk-tags"><span class="stag">LLM APIs</span><span class="stag">Fine-tuning</span><span class="stag">RAG</span><span class="stag">ChromaDB</span><span class="stag">Prompting</span></div></div>
+      <div class="sk r" style="transition-delay:.07s"><div class="sk-n">02</div><div class="sk-icon">⚙️</div><div class="sk-title">Agentic Systems</div><div class="sk-desc">Autonomous multi-agent pipelines — planning, tool use, memory, and task delegation via modern orchestration frameworks.</div><div class="sk-tags"><span class="stag">LangChain</span><span class="stag">LangGraph</span><span class="stag">CrewAI</span><span class="stag">AutoGen</span><span class="stag">OpenClaw</span></div></div>
+      <div class="sk r" style="transition-delay:.14s"><div class="sk-n">03</div><div class="sk-icon">🐍</div><div class="sk-title">Python & Backend</div><div class="sk-desc">FastAPI services, data pipelines, JSONL engineering, async patterns, and REST API design from scratch.</div><div class="sk-tags"><span class="stag">Python</span><span class="stag">FastAPI</span><span class="stag">Node.js</span><span class="stag">REST APIs</span></div></div>
+      <div class="sk r" style="transition-delay:.21s"><div class="sk-n">04</div><div class="sk-icon">☁️</div><div class="sk-title">Cloud & DevOps</div><div class="sk-desc">Self-hosted deployments on Azure VMs, Ubuntu server management, process orchestration, and Linux CLI mastery.</div><div class="sk-tags"><span class="stag">Azure</span><span class="stag">Ubuntu 24.04</span><span class="stag">Linux CLI</span><span class="stag">GitHub</span></div></div>
+      <div class="sk r" style="transition-delay:.28s"><div class="sk-n">05</div><div class="sk-icon">⚛️</div><div class="sk-title">Frontend & Full Stack</div><div class="sk-desc">React interfaces for AI apps, connecting to FastAPI backends with real-time features and modern UX patterns.</div><div class="sk-tags"><span class="stag">React</span><span class="stag">JavaScript</span><span class="stag">HTML/CSS</span><span class="stag">UI/UX</span></div></div>
+      <div class="sk r" style="transition-delay:.35s"><div class="sk-n">06</div><div class="sk-icon">☕</div><div class="sk-title">Java & DSA</div><div class="sk-desc">Data structures, algorithms, OOP design patterns, and competitive problem-solving foundations in Java.</div><div class="sk-tags"><span class="stag">Java</span><span class="stag">DSA</span><span class="stag">OOP</span><span class="stag">Algorithms</span></div></div>
+    </div>
+  </div>
+</section>
 
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          setTimeout(() => {
-            card.classList.add('fell');
-            setTimeout(() => {
-              card.querySelectorAll('.sk-bf').forEach(b => b.style.width = b.dataset.w + '%');
-            }, 300);
-          }, i * 90);
-          io.disconnect();
-        }
-      });
-    }, { threshold:.1 });
-    io.observe(card);
-  });
-}
+<!-- ══════════════════════════════════
+     PROJECTS
+══════════════════════════════════ -->
+<section id="projects" class="sec">
+  <div class="sw">
+    <div class="proj-header r">
+      <h2 class="proj-h2">Featured<br>Projects</h2>
+      <span class="proj-count">04 Works</span>
+    </div>
+  </div>
+  <div class="sw" style="max-width:100%;padding:0">
+    <div class="proj-track-outer" id="pto" style="padding:0 60px">
+      <div class="proj-track" id="pt">
 
-/* ── HORIZONTAL SCROLL (drag) ─────────── */
-function initHScroll() {
-  const wrap  = document.getElementById('hscrollWrap');
-  const track = document.getElementById('hscrollTrack');
-  if (!wrap || !track) return;
+        <div class="pcard big">
+          <div class="pc-img pb1">
+            <div class="pc-glow" style="width:200px;height:200px;background:#6d28d9;top:20%;left:10%"></div>
+            <div class="pc-glow" style="width:160px;height:160px;background:var(--lime);bottom:0;right:10%"></div>
+            <span style="position:relative;z-index:1;filter:drop-shadow(0 0 20px rgba(255,28,28,.4))">🤖</span>
+          </div>
+          <div class="pc-body">
+            <div class="pc-tag">// 01 · Featured</div>
+            <div class="pc-name">OpenClaw AI Agent Platform</div>
+            <ul class="pc-desc pc-desc-list">
+              <li>Full self-hosted AI agent infrastructure on Azure VM.</li>
+              <li>Telegram bot, Gmail via Himalaya, Twilio voice calls.</li>
+              <li>Multi-LLM routing via OpenRouter.</li>
+              <li>Production Linux deployment from scratch.</li>
+            </ul>
+            <div class="pc-chips"><span class="chip">OpenClaw</span><span class="chip">Azure VM</span><span class="chip">Node.js</span><span class="chip">Telegram</span><span class="chip">Twilio</span><span class="chip">OpenRouter</span></div>
+          </div>
+        </div>
 
-  // Build cards
-  H_PROJECTS.forEach(p => {
-    const c = document.createElement('div');
-    c.className = 'hcard';
-    c.innerHTML = `
-      <div class="hcard-banner" style="background:${p.bg}">
-        <div class="hcard-glow" style="background:${p.glowColor}"></div>
-        <span style="font-size:3rem;position:relative;z-index:1">${p.emoji}</span>
+        <div class="pcard">
+          <div class="pc-img pb2">
+            <div class="pc-glow" style="width:150px;height:150px;background:#0ea5e9;top:20%;left:20%"></div>
+            <span style="position:relative;z-index:1">💬</span>
+          </div>
+          <div class="pc-body">
+            <div class="pc-tag">// 02</div>
+            <div class="pc-name">Claude-like AI Chatbot</div>
+            <ul class="pc-desc pc-desc-list">
+              <li>Full-stack Claude-inspired assistant.</li>
+              <li>Gemini 1.5 Flash backend, FastAPI, React frontend.</li>
+              <li>RAG via ChromaDB and LangChain.</li>
+              <li>Designed to evolve into a full agentic system.</li>
+            </ul>
+            <div class="pc-chips"><span class="chip">Gemini 1.5</span><span class="chip">FastAPI</span><span class="chip">React</span><span class="chip">ChromaDB</span></div>
+          </div>
+        </div>
+
+        <div class="pcard">
+          <div class="pc-img pb3">
+            <div class="pc-glow" style="width:150px;height:150px;background:#ec4899;top:20%;left:20%"></div>
+            <span style="position:relative;z-index:1">📊</span>
+          </div>
+          <div class="pc-body">
+            <div class="pc-tag">// 03</div>
+            <div class="pc-name">LLM Fine-Tuning Dataset</div>
+            <div class="pc-desc">Python script generating 125-sample JSONL training data for Claude-like LLMs. Covers reasoning, Java/DSA coding, structured output & safety — zero validation errors.</div>
+            <div class="pc-chips"><span class="chip">Python</span><span class="chip">JSONL</span><span class="chip">Fine-tuning</span></div>
+          </div>
+        </div>
+
+        <div class="pcard">
+          <div class="pc-img pb4">
+            <div class="pc-glow" style="width:150px;height:150px;background:#22c55e;top:20%;left:20%"></div>
+            <span style="position:relative;z-index:1">🔗</span>
+          </div>
+          <div class="pc-body">
+            <div class="pc-tag">// 04 · In Progress</div>
+            <div class="pc-name">Multi-Agent Agentic System</div>
+            <div class="pc-desc">Evolving the chatbot into a multi-agent autonomous pipeline with LangGraph + CrewAI. Telegram bot as control interface. Self-planning AI with memory & tool-use.</div>
+            <div class="pc-chips"><span class="chip">LangGraph</span><span class="chip">CrewAI</span><span class="chip">AutoGen</span></div>
+          </div>
+        </div>
+
       </div>
-      <div class="hcard-body">
-        <div class="hcard-num">PROJECT_${p.num}</div>
-        <div class="hcard-name">${p.name}</div>
-        <p class="hcard-desc">${p.desc}</p>
-        <div class="hcard-tags">${p.tags.map(t=>`<span class="htag">${t}</span>`).join('')}</div>
-        <a href="${p.link}" target="_blank" class="hcard-link">${p.linkText}</a>
+    </div>
+    <div class="sw" style="padding-top:20px">
+      <div class="drag-cue r">
+        <div class="drag-arr"><span></span><span></span><span></span></div>
+        <span>Drag to explore</span>
       </div>
-    `;
-    track.appendChild(c);
-  });
+    </div>
+  </div>
+</section>
 
-  // Drag scroll
-  let isDown=false, startX=0, scrollLeft=0;
-  wrap.addEventListener('mousedown', e => {
-    isDown=true; wrap.classList.add('dragging');
-    startX = e.pageX - wrap.offsetLeft;
-    scrollLeft = wrap.scrollLeft;
-  });
-  document.addEventListener('mouseup', () => { isDown=false; wrap.classList.remove('dragging'); });
-  wrap.addEventListener('mousemove', e => {
-    if (!isDown) return;
-    e.preventDefault();
-    const x = e.pageX - wrap.offsetLeft;
-    wrap.scrollLeft = scrollLeft - (x - startX) * 1.2;
-  });
-
-  // Touch
-  let tStart=0, tScroll=0;
-  wrap.addEventListener('touchstart', e => { tStart=e.touches[0].pageX; tScroll=wrap.scrollLeft; },{passive:true});
-  wrap.addEventListener('touchmove',  e => {
-    const dx = tStart - e.touches[0].pageX;
-    wrap.scrollLeft = tScroll + dx;
-  },{passive:true});
-}
-
-/* ── PROJECTS GRID ───────────────────── */
-function initProjGrid() {
-  const grid = document.getElementById('projGrid');
-  if (!grid) return;
-  GRID_PROJECTS.forEach((p, i) => {
-    const c = document.createElement('div');
-    c.className = 'pg-card';
-    c.innerHTML = `
-      <div class="pg-num">${p.num}</div>
-      <div class="pg-name">${p.name}</div>
-      <p class="pg-desc">${p.desc}</p>
-      <a href="${p.link}" target="_blank" class="pg-link">${p.linkText}</a>
-    `;
-    grid.appendChild(c);
-    const io = new IntersectionObserver(ents => {
-      ents.forEach(e => {
-        if (e.isIntersecting) { setTimeout(()=>c.classList.add('vis'), i*100); io.disconnect(); }
-      });
-    },{threshold:.1});
-    io.observe(c);
-  });
-}
-
-/* ── ACHIEVEMENTS ────────────────────── */
-function initAch() {
-  const grid = document.getElementById('achGrid');
-  if (!grid) return;
-  ACHIEVEMENTS.forEach((a, i) => {
-    const c = document.createElement('div');
-    c.className = 'ach-card';
-    c.innerHTML = `
-      <div class="ach-icon">${a.icon}</div>
-      <div class="ach-body">
-        <div class="ach-badge">${a.badge}</div>
-        <div class="ach-title">${a.title}</div>
-        <p class="ach-desc">${a.desc}</p>
+<!-- ══════════════════════════════════
+     JOURNEY
+══════════════════════════════════ -->
+<section id="journey" class="sec">
+  <div class="sw">
+    <div class="jrn-grid">
+      <div class="jrn-left r">
+        <h2 class="jrn-big">My<br>Journey<br><span style="color:var(--lime)">So Far.</span></h2>
+        <p class="jrn-sub">From enrollment to self-hosted AI infrastructure in under a year — this is the build log.</p>
+        <a href="mailto:nikhilgumasta1@gmail.com" class="jrn-cta">Let's collaborate →</a>
       </div>
-    `;
-    grid.appendChild(c);
-    const io = new IntersectionObserver(ents => {
-      ents.forEach(e => {
-        if (e.isIntersecting) { setTimeout(()=>c.classList.add('vis'), i*110); io.disconnect(); }
-      });
-    },{threshold:.1});
-    io.observe(c);
-  });
-}
+      <div class="timeline">
+        <div class="tli">
+          <div class="tli-yr">2024</div>
+          <div><div class="tli-head">B.Tech AI & Data Science · SATI Vidisha</div><div class="tli-body">Enrolled in AIADS (Batch 2024–2028, #0108AI241045). Building deep ML foundations while simultaneously working on real-world AI projects that go far beyond the curriculum.</div><div class="tli-tags"><span class="tli-tag">Machine Learning</span><span class="tli-tag">Algorithms</span><span class="tli-tag">SATI</span></div></div>
+        </div>
+        <div class="tli">
+          <div class="tli-yr">2025</div>
+          <div><div class="tli-head">Self-Hosted AI Infrastructure on Azure</div><div class="tli-body">Deployed complete AI agent infrastructure from scratch on Azure for Students VM — nvm, Node.js, OpenClaw v2026.3.23-2, gateway config, port orchestration & multi-service integrations on Ubuntu 24.04.</div><div class="tli-tags"><span class="tli-tag">Azure VM</span><span class="tli-tag">Linux</span><span class="tli-tag">OpenClaw</span></div></div>
+        </div>
+        <div class="tli">
+          <div class="tli-yr">2025</div>
+          <div><div class="tli-head">LLM Fine-Tuning Dataset Engineering</div><div class="tli-body">Designed and generated a 125-sample JSONL fine-tuning dataset covering reasoning, teaching, coding assistance, structured output, and safety — zero validation errors across all records.</div><div class="tli-tags"><span class="tli-tag">JSONL</span><span class="tli-tag">Dataset Design</span><span class="tli-tag">Python</span></div></div>
+        </div>
+        <div class="tli">
+          <div class="tli-yr">2026</div>
+          <div><div class="tli-head">Full-Stack Claude-like AI Chatbot</div><div class="tli-body">Architected a production-grade AI assistant: Gemini 1.5 Flash + FastAPI + React + ChromaDB RAG pipeline. Clear roadmap toward full autonomous agentic behavior with LangGraph.</div><div class="tli-tags"><span class="tli-tag">Gemini</span><span class="tli-tag">FastAPI</span><span class="tli-tag">RAG</span></div></div>
+        </div>
+        <div class="tli">
+          <div class="tli-yr">→ Future</div>
+          <div><div class="tli-head">Agentic AI Research & Products</div><div class="tli-body">Building toward multi-agent autonomous systems, contributing to AI research, and creating products that genuinely push the frontier of intelligent systems. The mission: build AI that truly understands.</div><div class="tli-tags"><span class="tli-tag">LangGraph</span><span class="tli-tag">CrewAI</span><span class="tli-tag">Research</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-/* ── PARALLAX BLOBS ──────────────────── */
-function initParallax() {
-  const b1 = document.querySelector('.blob-1');
-  const b2 = document.querySelector('.blob-2');
-  const b3 = document.querySelector('.blob-3');
-  window.addEventListener('scroll', () => {
-    const y = scrollY;
-    if(b1) b1.style.transform = `translateY(${y * .12}px)`;
-    if(b2) b2.style.transform = `translateY(${-y * .08}px)`;
-    if(b3) b3.style.transform = `translateY(${y * .06}px)`;
-  });
+<!-- ══════════════════════════════════
+     CONTACT
+══════════════════════════════════ -->
+<section id="contact" class="sec">
+  <div class="contact-bg"></div>
+  <div class="sw">
+    <div class="contact-inner">
+      <div class="ct-label r">Get In Touch</div>
+      <h2 class="ct-big r">
+        Let's<br>Build<br><span class="ghost-txt">Something</span>
+      </h2>
+      <p class="ct-sub r">Open to internships · Research collabs · Interesting conversations about AI</p>
+      <div class="ct-links r">
+        <a href="mailto:nikhilgumasta1@gmail.com" class="cl" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          Email
+        </a>
+        <a href="https://github.com/CyberAkhil" class="cl" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+          GitHub
+        </a>
+        <a href="https://linkedin.com/in/nikhil-gumasta" class="cl" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </a>
+        <a href="https://nikhilg.is-a.dev" class="cl" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+          Website
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
 
-  // Mouse parallax on hero
-  document.addEventListener('mousemove', e => {
-    const x = (e.clientX / innerWidth  - .5) * 20;
-    const y = (e.clientY / innerHeight - .5) * 20;
-    const hr = document.querySelector('.hero-right');
-    if (hr) hr.style.transform = `translate(${x*.4}px,${y*.4}px)`;
-  });
-}
+<!-- FOOTER -->
+<footer>
+  <span>© 2025 <span class="ft-lime">CyberAkhil</span> · Nikhil Gumasta</span>
+  <span>SATI Vidisha · AIADS 2024–28</span>
+  <span>Built with obsession & ☕</span>
+</footer>
 
-/* ── MAGNETIC BUTTONS ────────────────── */
-function initMagnetic() {
-  document.querySelectorAll('.btn-primary, .btn-outline, .nav-cta, .contact-btn').forEach(el => {
-    el.addEventListener('mousemove', e => {
-      const r = el.getBoundingClientRect();
-      const x = (e.clientX - r.left - r.width/2)  * 0.25;
-      const y = (e.clientY - r.top  - r.height/2) * 0.25;
-      el.style.transform = `translate(${x}px,${y}px)`;
-    });
-    el.addEventListener('mouseleave', () => {
-      el.style.transform = '';
-      el.style.transition = 'transform .5s cubic-bezier(0.34,1.56,0.64,1)';
-      setTimeout(() => el.style.transition = '', 500);
-    });
-  });
-}
-
-/* ── HERO CARD TILT ──────────────────── */
-function initCardTilt() {
-  document.querySelectorAll('.float-card').forEach(card => {
-    card.addEventListener('mousemove', e => {
-      const r = card.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width  - .5;
-      const y = (e.clientY - r.top)  / r.height - .5;
-      card.style.transform = `perspective(600px) rotateX(${-y*12}deg) rotateY(${x*12}deg) scale(1.04)`;
-    });
-    card.addEventListener('mouseleave', () => { card.style.transform = ''; });
-  });
-}
-
-/* ── CONTACT SECTION REVEAL ──────────── */
-function initContactReveal() {
-  const sec = document.getElementById('contact');
-  if (!sec) return;
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) {
-        sec.querySelectorAll('.reveal').forEach((el, i) => {
-          setTimeout(() => el.classList.add('vis'), i * 100);
-        });
-        io.disconnect();
-      }
-    });
-  }, { threshold: .15 });
-  io.observe(sec);
-}
-
-/* ── KONAMI EASTER EGG ───────────────── */
-function initKonami() {
-  const seq = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
-  let idx = 0;
-  document.addEventListener('keydown', e => {
-    idx = e.key === seq[idx] ? idx+1 : 0;
-    if (idx === seq.length) {
-      idx = 0;
-      toast('🎮 Konami Code! Nikhil Mode: UNLOCKED 🔓');
-      document.querySelectorAll('.blob').forEach(b => {
-        b.style.opacity = '.6';
-        setTimeout(() => b.style.opacity = '', 2000);
-      });
-    }
-  });
-}
-
-function toast(msg) {
-  const el = document.createElement('div');
-  el.textContent = msg;
-  Object.assign(el.style, {
-    position:'fixed', bottom:'32px', left:'50%',
-    transform:'translateX(-50%) translateY(20px)',
-    background:'rgba(4,7,15,.95)',
-    border:'1px solid rgba(0,232,200,.3)',
-    color:'#00e8c8', fontFamily:'DM Mono,monospace',
-    fontSize:'.65rem', letterSpacing:'2px',
-    padding:'12px 28px', borderRadius:'4px',
-    zIndex:'9999', opacity:'0',
-    backdropFilter:'blur(12px)',
-    boxShadow:'0 0 30px rgba(0,232,200,.15)',
-    transition:'all .4s cubic-bezier(0.16,1,0.3,1)'
-  });
-  document.body.appendChild(el);
-  requestAnimationFrame(() => {
-    el.style.opacity = '1';
-    el.style.transform = 'translateX(-50%) translateY(0)';
-  });
-  setTimeout(() => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateX(-50%) translateY(10px)';
-    setTimeout(() => el.remove(), 400);
-  }, 3000);
-}
-
-/* ── INIT ALL ─────────────────────────── */
-function initAll() {
-  initCursor();
-  initProgressBar();
-  initNav();
-  initTyped();
-  initReveal();
-  initSkills();
-  initHScroll();
-  initProjGrid();
-  initAch();
-  initParallax();
-  initMagnetic();
-  initCardTilt();
-  initContactReveal();
-  initKonami();
-}
-
-/* SVG gradient for preloader (injected) */
-document.head.insertAdjacentHTML('beforeend', `
-  <svg width="0" height="0" style="position:absolute">
-    <defs>
-      <linearGradient id="preGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%"   stop-color="#8b5cf6"/>
-        <stop offset="50%"  stop-color="#00e8c8"/>
-        <stop offset="100%" stop-color="#ec4899"/>
-      </linearGradient>
-    </defs>
-  </svg>
-`);
-  
+<script src="script.js"></script>
+</body>
+</html>
